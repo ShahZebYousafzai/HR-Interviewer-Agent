@@ -196,4 +196,10 @@ Enable debug mode in `config/settings.py`:
 debug: bool = True
 ```
 
+## TO-DO
+
+1. CV/Resume Loader
+2. Document Parser for Profile Analysis
+3. Camera Integration
+
 *Built with ❤️ for intelligent interview experiences*
