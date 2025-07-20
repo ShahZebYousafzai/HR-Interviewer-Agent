@@ -11,7 +11,7 @@ from utils.session_manager import SessionManager
 from utils.timer import TimerUtils
 
 class StreamlitApp:
-    """Main Streamlit application"""
+    """Main Streamlit application with auto-initialize"""
     
     def __init__(self):
         self.audio_sidebar = AudioSidebar()
@@ -31,6 +31,9 @@ class StreamlitApp:
         # Update session state
         self._update_session_state()
         
+        # Auto-initialize the interview with hidden hello
+        self._auto_initialize_interview()
+        
         # Render main interface
         self.status_display.render()
         self.profile_display.render()
@@ -42,6 +45,18 @@ class StreamlitApp:
         
         # Handle pending TTS
         self._handle_pending_tts()
+    
+    def _auto_initialize_interview(self):
+        """Auto-initialize the interview if not already done"""
+        if hasattr(st.session_state, 'graph'):
+            # Check if we need to auto-initialize
+            auto_initialized = SessionManager.auto_initialize_interview()
+            
+            if auto_initialized and not hasattr(st.session_state, '_initial_rerun_done'):
+                # Mark that we've done the initial rerun to avoid infinite loops
+                st.session_state._initial_rerun_done = True
+                # Rerun to display the AI's welcome message
+                st.rerun()
     
     def _render_sidebar(self):
         """Render sidebar components"""
@@ -86,12 +101,16 @@ class StreamlitApp:
                 st.write(f"**Messages:** {len(state['messages'])}")
                 st.write(f"**Questions:** {len(state.get('question_bank', []))}")
                 st.write(f"**Ended:** {state.get('is_interview_ended', False)}")
+                st.write(f"**Auto-Init:** {state.get('auto_initialized', False)}")
                 
                 if state.get("interview_start_time"):
                     elapsed = datetime.now() - state["interview_start_time"]
                     st.write(f"**Elapsed:** {TimerUtils.format_time(elapsed)}")
 
             if st.button("🔄 Reset Interview"):
+                # Clear the auto-init flag when resetting
+                if hasattr(st.session_state, '_initial_rerun_done'):
+                    del st.session_state._initial_rerun_done
                 SessionManager.reset_interview()
                 st.rerun()
     
@@ -134,8 +153,8 @@ class StreamlitApp:
             if isinstance(latest_message, AIMessage):
                 st.session_state.pending_tts = {
                     "text": latest_message.content,
-                    "voice": st.session_state.selected_voice,
-                    "speed": st.session_state.speech_speed,
+                    "voice": getattr(st.session_state, 'selected_voice', 'rachel'),
+                    "speed": getattr(st.session_state, 'speech_speed', 1.0),
                 }
     
     def _handle_pending_tts(self):
