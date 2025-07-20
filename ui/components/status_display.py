@@ -43,7 +43,7 @@ class StatusDisplay:
         """Render voice status"""
         if st.session_state.state.get("voice_enabled", False):
             if getattr(st.session_state, 'tts_enabled', False):
-                st.success("🔊 TTS: Edge TTS")
+                st.success("🔊 TTS: ElevenLabs TTS")
             else:
                 st.info("🎤 Voice: STT Only")
         else:

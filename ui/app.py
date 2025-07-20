@@ -61,7 +61,7 @@ class StreamlitApp:
             # System status
             st.subheader("📊 System Status")
             st.success("🤖 Model: Llama3.2")
-            st.success("🔊 TTS: Edge TTS")
+            st.success("🔊 TTS: ElevenLabs TTS")
             st.success("🎤 STT: Google Speech Recognition")
             st.success("🎙️ Voice: Auto-Enabled")
             
