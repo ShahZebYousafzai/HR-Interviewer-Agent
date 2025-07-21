@@ -22,7 +22,7 @@ class TTSManager:
             self.text_processor = TextProcessor()
             
             # Initialize ElevenLabs client
-            api_key = "sk_9f1dc8802fb4c1e1cdb9d023b12b285d2eed23a1aa19dbdd"
+            api_key = "ELEVENLABS_API_KEY"
             if not api_key:
                 raise TTSError("ElevenLabs API key not found. Please set ELEVENLABS_API_KEY environment variable.")
             
